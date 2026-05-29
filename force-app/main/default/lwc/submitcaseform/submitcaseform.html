@@ -1,0 +1,109 @@
+<template>
+    <div class="slds-box slds-theme_default slds-var-p-around_large">
+
+        <!-- Header -->
+        <div class="slds-text-heading_medium slds-var-m-bottom_small">
+            Raise a Case
+        </div>
+        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
+            Tell us about your issue and we will get back to you.
+        </p>
+
+        <!-- Error message -->
+        <template if:true={errorMessage}>
+            <div class="slds-notify slds-notify_alert slds-theme_error slds-var-m-bottom_medium" role="alert">
+                <h2>{errorMessage}</h2>
+            </div>
+        </template>
+
+        <!-- Success message -->
+        <template if:true={isSuccess}>
+            <div class="slds-notify slds-notify_alert slds-theme_success slds-var-m-bottom_medium" role="alert">
+                <h2>Case {caseNumber} has been created successfully.</h2>
+            </div>
+            <div class="slds-text-align_center slds-var-m-top_medium">
+                <lightning-button
+                    variant="neutral"
+                    label="Raise Another Case"
+                    onclick={handleReset}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <!-- Case form -->
+        <template if:false={isSuccess}>
+            <div class="slds-form slds-form_stacked">
+
+                <!-- Subject -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        label="Subject"
+                        value={subject}
+                        onchange={handleSubjectChange}
+                        required
+                        placeholder="Brief summary of your issue"
+                        message-when-value-missing="Subject is required">
+                    </lightning-input>
+                </div>
+
+                <!-- Type -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-combobox
+                        label="Type"
+                        value={caseType}
+                        options={typeOptions}
+                        onchange={handleTypeChange}
+                        placeholder="Select type">
+                    </lightning-combobox>
+                </div>
+
+                <!-- Case Reason -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-combobox
+                        label="Case Reason"
+                        value={caseReason}
+                        options={reasonOptions}
+                        onchange={handleReasonChange}
+                        placeholder="Select reason">
+                    </lightning-combobox>
+                </div>
+
+                <!-- Case Origin -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-combobox
+                        label="Case Origin"
+                        value={caseOrigin}
+                        options={originOptions}
+                        onchange={handleOriginChange}
+                        placeholder="Select origin">
+                    </lightning-combobox>
+                </div>
+
+                <!-- Description -->
+                <div class="slds-form-element slds-var-m-bottom_medium">
+                    <lightning-textarea
+                        label="Description"
+                        value={description}
+                        onchange={handleDescriptionChange}
+                        required
+                        placeholder="Describe your issue in detail"
+                        message-when-value-missing="Description is required"
+                        max-length="32000">
+                    </lightning-textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="slds-form-element slds-var-m-top_medium">
+                    <lightning-button
+                        variant="brand"
+                        label={buttonLabel}
+                        onclick={handleSubmit}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </div>
+
+            </div>
+        </template>
+
+    </div>
+</template>

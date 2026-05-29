@@ -1,0 +1,128 @@
+<template>
+    <div class="slds-box slds-theme_default slds-var-p-around_large">
+        
+        <!-- Header -->
+        <div class="slds-text-heading_medium slds-var-m-bottom_medium">
+            Create Your Account
+        </div>
+        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
+            Sign up to access the support portal and raise cases.
+        </p>
+
+        <!-- Error message -->
+        <template if:true={errorMessage}>
+            <div class="slds-notify slds-notify_alert slds-theme_error slds-var-m-bottom_medium" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <h2>{errorMessage}</h2>
+            </div>
+        </template>
+
+        <!-- Success message -->
+        <template if:true={isSuccess}>
+            <div class="slds-notify slds-notify_alert slds-theme_success slds-var-m-bottom_medium" role="alert">
+                <span class="slds-assistive-text">Success</span>
+                <h2>Registration successful! Redirecting...</h2>
+            </div>
+        </template>
+
+        <!-- Registration form -->
+        <template if:false={isSuccess}>
+            <div class="slds-form slds-form_stacked">
+
+                <!-- Company Name -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        label="Company Name"
+                        value={companyName}
+                        onchange={handleCompanyNameChange}
+                        required
+                        placeholder="e.g. Acme Corp"
+                        message-when-value-missing="Company name is required">
+                    </lightning-input>
+                </div>
+
+                <!-- First Name -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        label="First Name"
+                        value={firstName}
+                        onchange={handleFirstNameChange}
+                        placeholder="First name">
+                    </lightning-input>
+                </div>
+
+                <!-- Last Name -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        label="Last Name"
+                        value={lastName}
+                        onchange={handleLastNameChange}
+                        required
+                        placeholder="Last name"
+                        message-when-value-missing="Last name is required">
+                    </lightning-input>
+                </div>
+
+                <!-- Email -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        type="email"
+                        label="Email"
+                        value={email}
+                        onchange={handleEmailChange}
+                        required
+                        placeholder="you@company.com"
+                        message-when-value-missing="Email is required">
+                    </lightning-input>
+                </div>
+
+                <!-- Password -->
+                <div class="slds-form-element slds-var-m-bottom_small">
+                    <lightning-input
+                        type="password"
+                        label="Password"
+                        value={password}
+                        onchange={handlePasswordChange}
+                        required
+                        placeholder="Create a password"
+                        message-when-value-missing="Password is required">
+                    </lightning-input>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="slds-form-element slds-var-m-bottom_medium">
+                    <lightning-input
+                        type="password"
+                        label="Confirm Password"
+                        value={confirmPassword}
+                        onchange={handleConfirmPasswordChange}
+                        required
+                        placeholder="Confirm your password"
+                        message-when-value-missing="Please confirm your password">
+                    </lightning-input>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="slds-form-element slds-var-m-top_medium">
+                    <lightning-button
+                        variant="brand"
+                        label={buttonLabel}
+                        onclick={handleRegister}
+                        disabled={isLoading}
+                        class="slds-button_stretch">
+                    </lightning-button>
+                </div>
+
+                <!-- Login link -->
+                <div class="slds-text-align_center slds-var-m-top_medium">
+                    <span class="slds-text-body_small slds-text-color_weak">
+                        Already have an account? 
+                        <a href={loginUrl}>Log in</a>
+                    </span>
+                </div>
+
+            </div>
+        </template>
+
+    </div>
+</template>

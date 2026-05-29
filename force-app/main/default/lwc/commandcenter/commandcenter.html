@@ -1,0 +1,190 @@
+<template>
+    <div class="slds-var-p-around_medium">
+
+        <!-- Header -->
+        <div class="slds-page-header slds-var-m-bottom_medium">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title">Service Command Center</h1>
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                Real-time SLA monitoring and escalation management
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <lightning-button
+                        variant="neutral"
+                        label="Refresh"
+                        icon-name="utility:refresh"
+                        onclick={handleRefresh}>
+                    </lightning-button>
+                    <template if:true={lastRefreshed}>
+                        <span class="slds-text-body_small slds-text-color_weak slds-var-m-left_small">
+                            Last updated: {lastRefreshed}
+                        </span>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading dashboard..." size="medium"></lightning-spinner>
+        </template>
+
+        <template if:false={isLoading}>
+
+            <!-- Today's Snapshot Cards -->
+            <template if:true={snapshot}>
+                <div class="slds-grid slds-gutters slds-var-m-bottom_medium slds-wrap">
+                    <div class="slds-col slds-size_1-of-5">
+                        <div class="slds-box slds-text-align_center snapshot-card">
+                            <p class="slds-text-heading_large">{snapshot.activeCaseCount}</p>
+                            <p class="slds-text-body_small">Active Cases</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-5">
+                        <div class="slds-box slds-text-align_center snapshot-card">
+                            <p class="slds-text-heading_large">{snapshot.casesCreatedToday}</p>
+                            <p class="slds-text-body_small">Created Today</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-5">
+                        <div class="slds-box slds-text-align_center snapshot-card">
+                            <p class="slds-text-heading_large">{snapshot.casesResolvedToday}</p>
+                            <p class="slds-text-body_small">Resolved Today</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-5">
+                        <div class="slds-box slds-text-align_center snapshot-card breached-card">
+                            <p class="slds-text-heading_large">{snapshot.casesBreachedToday}</p>
+                            <p class="slds-text-body_small">Breached</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-5">
+                        <div class="slds-box slds-text-align_center snapshot-card escalation-card">
+                            <p class="slds-text-heading_large">{snapshot.openEscalationCount}</p>
+                            <p class="slds-text-body_small">Open Escalations</p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Open Escalations Table -->
+            <div class="slds-box slds-var-m-bottom_medium">
+                <h2 class="slds-text-heading_small slds-var-m-bottom_small">
+                    <lightning-icon icon-name="utility:warning" size="small" class="slds-var-m-right_x-small"></lightning-icon>
+                    Open Escalations
+                </h2>
+                <template if:true={hasEscalations}>
+                    <lightning-datatable
+                        key-field="escalationId"
+                        data={openEscalations}
+                        columns={escalationColumns}
+                        hide-checkbox-column
+                        onrowaction={handleEscalationRowAction}>
+                    </lightning-datatable>
+                </template>
+                <template if:false={hasEscalations}>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-var-p-around_small">
+                        No open escalations. All SLAs are on track.
+                    </p>
+                </template>
+            </div>
+
+            <!-- Breached Cases Table -->
+            <div class="slds-box slds-var-m-bottom_medium">
+                <h2 class="slds-text-heading_small slds-var-m-bottom_small">
+                    <lightning-icon icon-name="utility:error" size="small" class="slds-var-m-right_x-small"></lightning-icon>
+                    Breached Cases
+                </h2>
+                <template if:true={hasBreachedCases}>
+                    <lightning-datatable
+                        key-field="caseId"
+                        data={breachedCases}
+                        columns={caseColumns}
+                        hide-checkbox-column
+                        onrowaction={handleCaseRowAction}>
+                    </lightning-datatable>
+                </template>
+                <template if:false={hasBreachedCases}>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-var-p-around_small">
+                        No breached cases. All deadlines are being met.
+                    </p>
+                </template>
+            </div>
+
+            <!-- Critical Watchlist -->
+            <div class="slds-box slds-var-m-bottom_medium">
+                <h2 class="slds-text-heading_small slds-var-m-bottom_small">
+                    <lightning-icon icon-name="utility:priority" size="small" class="slds-var-m-right_x-small"></lightning-icon>
+                    Critical Watchlist (S1 / S2)
+                </h2>
+                <template if:true={hasCriticalCases}>
+                    <lightning-datatable
+                        key-field="caseId"
+                        data={criticalWatchlist}
+                        columns={caseColumns}
+                        hide-checkbox-column
+                        onrowaction={handleCaseRowAction}>
+                    </lightning-datatable>
+                </template>
+                <template if:false={hasCriticalCases}>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-var-p-around_small">
+                        No critical S1/S2 cases active.
+                    </p>
+                </template>
+            </div>
+
+            <!-- SLA Compliance -->
+            <div class="slds-grid slds-gutters slds-var-m-bottom_medium">
+                <!-- Compliance by Plan -->
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-box">
+                        <h2 class="slds-text-heading_small slds-var-m-bottom_small">
+                            SLA Compliance by Plan
+                        </h2>
+                        <template if:true={hasComplianceByPlan}>
+                            <lightning-datatable
+                                key-field="groupName"
+                                data={complianceByPlan}
+                                columns={complianceColumns}
+                                hide-checkbox-column>
+                            </lightning-datatable>
+                        </template>
+                        <template if:false={hasComplianceByPlan}>
+                            <p class="slds-text-body_regular slds-text-color_weak slds-var-p-around_small">
+                                No analytics data yet. Run the analytics batch first.
+                            </p>
+                        </template>
+                    </div>
+                </div>
+                <!-- Compliance by Severity -->
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-box">
+                        <h2 class="slds-text-heading_small slds-var-m-bottom_small">
+                            SLA Compliance by Severity
+                        </h2>
+                        <template if:true={hasComplianceBySeverity}>
+                            <lightning-datatable
+                                key-field="groupName"
+                                data={complianceBySeverity}
+                                columns={complianceColumns}
+                                hide-checkbox-column>
+                            </lightning-datatable>
+                        </template>
+                        <template if:false={hasComplianceBySeverity}>
+                            <p class="slds-text-body_regular slds-text-color_weak slds-var-p-around_small">
+                                No analytics data yet. Run the analytics batch first.
+                            </p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+        </template>
+    </div>
+</template>

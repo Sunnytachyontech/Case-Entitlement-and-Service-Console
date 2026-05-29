@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="loginUrl" type="String" default="/login" label="Login Page URL" />
+            <property name="startUrl" type="String" default="/s/" label="Start URL after registration" />
+            <property name="regConfirmUrl" type="String" default="/s/login/SelfRegisterConfirm" label="Registration Confirmation URL" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

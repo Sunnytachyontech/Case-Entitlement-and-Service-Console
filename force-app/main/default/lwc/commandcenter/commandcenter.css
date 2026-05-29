@@ -1,0 +1,27 @@
+.snapshot-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: #f3f3f3;
+}
+
+.snapshot-card .slds-text-heading_large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.breached-card {
+    background: #fef0ef;
+}
+
+.breached-card .slds-text-heading_large {
+    color: #c23934;
+}
+
+.escalation-card {
+    background: #fef4e8;
+}
+
+.escalation-card .slds-text-heading_large {
+    color: #e87800;
+}
